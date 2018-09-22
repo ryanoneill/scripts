@@ -1,0 +1,24 @@
+#!/bin/sh
+
+NAME=$1
+shift;
+
+SML_FILENAME="$NAME.sml"
+CM_FILENAME="$NAME.cm"
+
+# Create Compilation Manager File
+/bin/cat <<EOM > "$CM_FILENAME"
+group is
+  $SML_FILENAME
+  $/basis.cm
+  $/smlnj-lib.cm
+EOM
+
+# Create Compliation Manager Script
+echo "CM.make(\"$CM_FILENAME\");" > compile.sml
+
+# Compile
+sml compile.sml > /dev/null
+
+# Run
+sml @SMLload="$NAME.x86-linux" "$@"
